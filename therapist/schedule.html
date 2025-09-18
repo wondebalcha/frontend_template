@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule - Therapist Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #ec4899;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 20px;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb i {
+            margin: 0 8px;
+            font-size: 12px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .view-options {
+            display: flex;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 4px;
+        }
+        
+        .view-option {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .view-option.active {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .date-navigation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .date-nav-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .current-date {
+            font-weight: 600;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Schedule Layout */
+        .schedule-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+        
+        /* Schedule Content */
+        .schedule-content {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Calendar View */
+        .calendar-view {
+            display: none;
+        }
+        
+        .calendar-view.active {
+            display: block;
+        }
+        
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .calendar-day {
+            height: 100px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background-color: #eef2f7;
+        }
+        
+        .calendar-day.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .calendar-day.has-appointments::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .calendar-day.other-month {
+            background-color: #f1f5f9;
+            color: var(--gray);
+        }
+        
+        .day-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .day-appointments {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        /* List View */
+        .list-view {
+            display: none;
+        }
+        
+        .list-view.active {
+            display: block;
+        }
+        
+        .appointment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .appointment-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-info {
+            flex: 1;
+        }
+        
+        .appointment-time {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .appointment-patient {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .appointment-type {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .appointment-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 15px;
+        }
+        
+        .status-confirmed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-cancelled {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .appointment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .btn-danger {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Time Slots View */
+        .time-slots-view {
+            display: none;
+        }
+        
+        .time-slots-view.active {
+            display: block;
+        }
+        
+        .time-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .time-slot {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .time-header {
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--primary);
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .panel-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-card h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        /* Schedule Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Quick Schedule */
+        .quick-schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-schedule-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .quick-schedule-item:hover {
+            background-color: #eef2f7;
+        }
+        
+        .schedule-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: white;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .schedule-content h4 {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .schedule-content p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Availability Settings */
+        .availability-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .availability-item:last-child {
+            border-bottom: none;
+        }
+        
+        .availability-info h4 {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .availability-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-light);
+            transition: .4s;
+            border-radius: 20px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .schedule-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .nav-items {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .nav-item {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .nav-item:hover, .nav-item.active {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary);
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .user-menu {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .calendar-day {
+                height: 80px;
+            }
+            
+            .appointment-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .appointment-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-text">HealthCare+</div>
+        </div>
+        
+        <nav class="nav-items">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>My Dashboard</span>
+            </a>
+            <a href="mypatient.html" class="nav-item">
+                <i class="fas fa-user-friends"></i>
+                <span>My Patients</span>
+            </a>
+            <a href="schedule.html" class="nav-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="message.html" class="nav-item">
+                <i class="fas fa-comment-medical"></i>
+                <span>Messages</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fas fa-file-medical"></i>
+                <span>Documents</span>
+            </a>
+            <a href="report.html" class="nav-item active">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reports</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">
+                    <a href="#">Dashboard</a> <i class="fas fa-chevron-right"></i> <span>Schedule</span>
+                </div>
+                <h1 class="page-title">My Schedule</h1>
+            </div>
+            <div class="user-menu">
+                <div class="view-options">
+                    <div class="view-option active" data-view="calendar">Calendar</div>
+                    <div class="view-option" data-view="list">List</div>
+                    <div class="view-option" data-view="time-slots">Time Slots</div>
+                </div>
+                
+                <div class="date-navigation">
+                    <div class="date-nav-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="current-date">August 2023</div>
+                    <div class="date-nav-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="user-avatar">ER</div>
+            </div>
+        </div>
+
+        <!-- Schedule Layout -->
+        <div class="schedule-container">
+            <!-- Main Content -->
+            <div class="schedule-content">
+                <!-- Calendar View -->
+                <div class="calendar-view active" id="calendarView">
+                    <div class="calendar-header">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+                    
+                    <div class="calendar-grid">
+                        <div class="calendar-day other-month">
+                            <div class="day-number">30</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">31</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">1</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">2</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">3</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">4</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">5</div>
+                        </div>
+                        
+                        <div class="calendar-day">
+                            <div class="day-number">6</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">7</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">8</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">9</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">10</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">11</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">12</div>
+                        </div>
+                        
+                        <div class="calendar-day">
+                            <div class="day-number">13</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">14</div>
+                        </div>
+                        <div class="calendar-day active has-appointments">
+                            <div class="day-number">15</div>
+                            <div class="day-appointments">5 appointments</div>
+                        </div>
+                        <div class="calendar-day has-appointments">
+                            <div class="day-number">16</div>
+                            <div class="day-appointments">3 appointments</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">17</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">18</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">19</div>
+                        </div>
+                        
+                        <div class="calendar-day">
+                            <div class="day-number">20</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">21</div>
+                        </div>
+                        <div class="calendar-day has-appointments">
+                            <div class="day-number">22</div>
+                            <div class="day-appointments">6 appointments</div>
+                        </div>
+                        <div class="calendar-day has-appointments">
+                            <div class="day-number">23</div>
+                            <div class="day-appointments">4 appointments</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">24</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">25</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">26</div>
+                        </div>
+                        
+                        <div class="calendar-day">
+                            <div class="day-number">27</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">28</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">29</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">30</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">31</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">1</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">2</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- List View -->
+                <div class="list-view" id="listView">
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <div class="appointment-time">10:00 AM - 10:45 AM</div>
+                            <div class="appointment-patient">Sarah Johnson</div>
+                            <div class="appointment-type">Individual Therapy • Anxiety Management</div>
+                        </div>
+                        <div class="appointment-status status-confirmed">Confirmed</div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-video"></i> Join
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-pen"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <div class="appointment-time">11:00 AM - 11:50 AM</div>
+                            <div class="appointment-patient">Michael Chen</div>
+                            <div class="appointment-type">Individual Therapy • Depression</div>
+                        </div>
+                        <div class="appointment-status status-confirmed">Confirmed</div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-video"></i> Join
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-pen"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <div class="appointment-time">1:30 PM - 2:15 PM</div>
+                            <div class="appointment-patient">David Wilson</div>
+                            <div class="appointment-type">Individual Therapy • PTSD</div>
+                        </div>
+                        <div class="appointment-status status-pending">Pending</div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-check"></i> Confirm
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-pen"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <div class="appointment-time">3:00 PM - 3:45 PM</div>
+                            <div class="appointment-patient">Lisa Martinez</div>
+                            <div class="appointment-type">Individual Therapy • Relationship Issues</div>
+                        </div>
+                        <div class="appointment-status status-confirmed">Confirmed</div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-video"></i> Join
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-pen"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <div class="appointment-time">4:30 PM - 5:15 PM</div>
+                            <div class="appointment-patient">Robert Brown</div>
+                            <div class="appointment-type">Individual Therapy • OCD</div>
+                        </div>
+                        <div class="appointment-status status-cancelled">Cancelled</div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-calendar-plus"></i> Reschedule
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Time Slots View -->
+                <div class="time-slots-view" id="timeSlotsView">
+                    <div class="time-header">Monday, August 15, 2023</div>
+                    
+                    <div class="time-slots">
+                        <div class="time-slot">
+                            <div class="appointment-item">
+                                <div class="appointment-info">
+                                    <div class="appointment-time">10:00 AM - 10:45 AM</div>
+                                    <div class="appointment-patient">Sarah Johnson</div>
+                                    <div class="appointment-type">Individual Therapy • Anxiety Management</div>
+                                </div>
+                                <div class="appointment-status status-confirmed">Confirmed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="time-slot">
+                            <div class="appointment-item">
+                                <div class="appointment-info">
+                                    <div class="appointment-time">11:00 AM - 11:50 AM</div>
+                                    <div class="appointment-patient">Michael Chen</div>
+                                    <div class="appointment-type">Individual Therapy • Depression</div>
+                                </div>
+                                <div class="appointment-status status-confirmed">Confirmed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="time-slot">
+                            <div class="appointment-item">
+                                <div class="appointment-info">
+                                    <div class="appointment-time">1:30 PM - 2:15 PM</div>
+                                    <div class="appointment-patient">David Wilson</div>
+                                    <div class="appointment-type">Individual Therapy • PTSD</div>
+                                </div>
+                                <div class="appointment-status status-pending">Pending</div>
+                            </div>
+                        </div>
+                        
+                        <div class="time-slot">
+                            <div class="appointment-item">
+                                <div class="appointment-info">
+                                    <div class="appointment-time">3:00 PM - 3:45 PM</div>
+                                    <div class="appointment-patient">Lisa Martinez</div>
+                                    <div class="appointment-type">Individual Therapy • Relationship Issues</div>
+                                </div>
+                                <div class="appointment-status status-confirmed">Confirmed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="time-slot">
+                            <div class="appointment-item">
+                                <div class="appointment-info">
+                                    <div class="appointment-time">4:30 PM - 5:15 PM</div>
+                                    <div class="appointment-patient">Robert Brown</div>
+                                    <div class="appointment-type">Individual Therapy • OCD</div>
+                                </div>
+                                <div class="appointment-status status-cancelled">Cancelled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <div class="panel-card">
+                    <h3>Schedule Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">18</div>
+                            <div class="stat-label">This Week</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Today</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Cancelled</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-card">
+                    <h3>Quick Schedule</h3>
+                    <div class="quick-schedule-item">
+                        <div class="schedule-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="schedule-content">
+                            <h4>New Appointment</h4>
+                            <p>Schedule a new session</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-schedule-item">
+                        <div class="schedule-icon" style="background-color: var(--success);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="schedule-content">
+                            <h4>Group Session</h4>
+                            <p>Create a group therapy session</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-schedule-item">
+                        <div class="schedule-icon" style="background-color: var(--warning);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="schedule-content">
+                            <h4>Set Availability</h4>
+                            <p>Update your working hours</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-card">
+                    <h3>Availability Settings</h3>
+                    <div class="availability-item">
+                        <div class="availability-info">
+                            <h4>Monday</h4>
+                            <p>9:00 AM - 5:00 PM</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="availability-item">
+                        <div class="availability-info">
+                            <h4>Tuesday</h4>
+                            <p>9:00 AM - 5:00 PM</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="availability-item">
+                        <div class="availability-info">
+                            <h4>Wednesday</h4>
+                            <p>9:00 AM - 5:00 PM</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="availability-item">
+                        <div class="availability-info">
+                            <h4>Thursday</h4>
+                            <p>10:00 AM - 6:00 PM</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="availability-item">
+                        <div class="availability-info">
+                            <h4>Friday</h4>
+                            <p>9:00 AM - 4:00 PM</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="availability-item">
+                        <div class="availability-info">
+                            <h4>Weekends</h4>
+                            <p>Not available</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // View switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewOptions = document.querySelectorAll('.view-option');
+            const views = {
+                calendar: document.getElementById('calendarView'),
+                list: document.getElementById('listView'),
+                'time-slots': document.getElementById('timeSlotsView')
+            };
+            
+            viewOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const viewId = option.getAttribute('data-view');
+                    
+                    // Remove active class from all options and hide all views
+                    viewOptions.forEach(opt => opt.classList.remove('active'));
+                    Object.values(views).forEach(view => view.classList.remove('active'));
+                    
+                    // Add active class to clicked option and show corresponding view
+                    option.classList.add('active');
+                    views[viewId].classList.add('active');
+                });
+            });
+            
+            // Calendar day click functionality
+            const calendarDays = document.querySelectorAll('.calendar-day:not(.other-month)');
+            calendarDays.forEach(day => {
+                day.addEventListener('click', () => {
+                    // In a real application, you would show appointments for that day
+                    // For this demo, we'll switch to the time slots view
+                    viewOptions.forEach(opt => opt.classList.remove('active'));
+                    document.querySelector('.view-option[data-view="time-slots"]').classList.add('active');
+                    
+                    Object.values(views).forEach(view => view.classList.remove('active'));
+                    views['time-slots'].classList.add('active');
+                });
+            });
+            
+            // Date navigation functionality
+            const dateNavButtons = document.querySelectorAll('.date-nav-btn');
+            const currentDateElement = document.querySelector('.current-date');
+            
+            dateNavButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // In a real application, you would change the displayed month
+                    // For this demo, we'll just toggle between months
+                    const currentText = currentDateElement.textContent;
+                    if (currentText === 'August 2023') {
+                        currentDateElement.textContent = 'September 2023';
+                    } else {
+                        currentDateElement.textContent = 'August 2023';
+                    }
+                });
+            });
+            
+            // Toggle switch functionality
+            const toggleSwitches = document.querySelectorAll('.toggle-switch input');
+            toggleSwitches.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    // In a real application, you would save the availability setting
+                    console.log(`Availability toggled: ${this.checked ? 'on' : 'off'}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

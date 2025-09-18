@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Behavioral Portal - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1000px;
+            min-height: 550px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(to bottom right, #0d6efd, #0a58ca);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -50px;
+            left: -50px;
+        }
+        
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -50px;
+            right: -50px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            margin-right: 12px;
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .panel-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .panel-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .panel-description {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+        
+        .features {
+            list-style: none;
+            margin-top: 30px;
+        }
+        
+        .features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .features i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .login-subtitle {
+            color: #7f8c8d;
+            font-size: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        .input-with-icon input {
+            padding-left: 45px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            border-color: #0d6efd;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        }
+        
+        .role-selector {
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .role-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-right: 1px solid #ddd;
+        }
+        
+        .role-option:last-child {
+            border-right: none;
+        }
+        
+        .role-option.active {
+            background: #0d6efd;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .remember {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember input {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .forgot-password {
+            color: #0d6efd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .forgot-password:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-button:hover {
+            background: #0a58ca;
+        }
+        
+        .help-text {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+        
+        .help-text a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .help-text a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                max-width: 100%;
+            }
+            
+            .left-panel {
+                padding: 30px;
+            }
+            
+            .right-panel {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Panel with Information -->
+        <div class="left-panel">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+                <div class="logo-text">HealthCare+</div>
+            </div>
+            <div class="panel-content">
+                <h2 class="panel-title">Secure Behavioral Health Portal</h2>
+                <p class="panel-description">Access your personalized healthcare resources and connect with your care team through our encrypted portal.</p>
+                
+                <ul class="features">
+                    <li><i class="fas fa-shield-alt"></i> HIPAA Compliant & Secure</li>
+                    <li><i class="fas fa-video"></i> Virtual Therapy Sessions</li>
+                    <li><i class="fas fa-comment-medical"></i> Secure Messaging</li>
+                    <li><i class="fas fa-file-medical"></i> Access Medical Records</li>
+                    <li><i class="fas fa-calendar-check"></i> Easy Appointment Scheduling</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Right Panel with Login Form -->
+        <div class="right-panel">
+            <div class="login-header">
+                <h1 class="login-title">Behavioral Health Portal</h1>
+                <p class="login-subtitle">Sign in to access your account</p>
+            </div>
+            
+            <div class="role-selector">
+                <div class="role-option active" id="patient-role">I am a Patient</div>
+                <div class="role-option" id="staff-role">I am a Staff Member</div>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                
+                <div class="remember-forgot">
+                    <div class="remember">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="login-button">Sign In</button>
+            </form>
+            
+            <div class="help-text">
+                <p><strong>New patient?</strong> If you have not received your login credentials, please contact your intake coordinator at <a href="tel:+15551234567">(555) 123-4567</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Role selection functionality
+        const patientRole = document.getElementById('patient-role');
+        const staffRole = document.getElementById('staff-role');
+        
+        patientRole.addEventListener('click', () => {
+            patientRole.classList.add('active');
+            staffRole.classList.remove('active');
+        });
+        
+        staffRole.addEventListener('click', () => {
+            staffRole.classList.add('active');
+            patientRole.classList.remove('active');
+        });
+        
+        // Form submission
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Here you would normally handle the login process
+            alert('Login functionality would be implemented here. This is a frontend template for design purposes.');
+        });
+    </script>
+</body>
+</html>

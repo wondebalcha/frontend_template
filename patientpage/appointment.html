@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments - Healthcare Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #ec4899;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 20px;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb i {
+            margin: 0 8px;
+            font-size: 12px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Appointments Layout */
+        .appointments-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+        
+        /* Appointments Content */
+        .appointments-content {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .view-options {
+            display: flex;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 4px;
+        }
+        
+        .view-option {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .view-option.active {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .date-navigation {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .date-nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .date-nav-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .current-date {
+            font-weight: 600;
+        }
+        
+        /* Calendar */
+        .calendar {
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .calendar-day {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .calendar-day:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .calendar-day.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .calendar-day.has-appointment::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+        }
+        
+        .calendar-day.other-month {
+            color: var(--gray);
+        }
+        
+        /* Appointments List */
+        .appointments-list {
+            margin-top: 30px;
+        }
+        
+        .appointment-card {
+            padding: 20px;
+            border-radius: 12px;
+            background-color: white;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .appointment-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .appointment-therapist {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .appointment-time {
+            font-size: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .appointment-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status-upcoming {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        
+        .status-completed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-cancelled {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .appointment-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .btn-danger {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .panel-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-card h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .quick-action {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-action:last-child {
+            margin-bottom: 0;
+        }
+        
+        .quick-action:hover {
+            background-color: #eef2f7;
+        }
+        
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: white;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .action-content h4 {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .action-content p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .appointments-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .nav-items {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .nav-item {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .nav-item:hover, .nav-item.active {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary);
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .appointment-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-text">HealthCare+</div>
+        </div>
+        
+        <nav class="nav-items">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="mytherapist.html" class="nav-item">
+                <i class="fas fa-user-md"></i>
+                <span>My Therapist</span>
+            </a>
+            <a href="message.html" class="nav-item">
+                <i class="fas fa-comment-medical"></i>
+                <span>Messages</span>
+            </a>
+            <a href="appointment.html" class="nav-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>My Appointments</span>
+            </a>
+            <a href="resource.html" class="nav-item">
+                <i class="fas fa-file-medical"></i>
+                <span>Resources</span>
+            </a>
+            <a href="setting.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Profile & Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">
+                    <a href="#">Dashboard</a> <i class="fas fa-chevron-right"></i> <span>My Appointments</span>
+                </div>
+                <h1 class="page-title">My Appointments</h1>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar">JS</div>
+                <div class="user-info">
+                    <div class="user-name">John Smith</div>
+                    <div class="user-role">Patient</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Layout -->
+        <div class="appointments-container">
+            <!-- Main Content -->
+            <div class="appointments-content">
+                <div class="content-header">
+                    <div class="view-options">
+                        <div class="view-option active">List View</div>
+                        <div class="view-option">Calendar View</div>
+                    </div>
+                    
+                    <div class="date-navigation">
+                        <div class="date-nav-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="current-date">August 2023</div>
+                        <div class="date-nav-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar -->
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+                    
+                    <div class="calendar-grid">
+                        <div class="calendar-day other-month">30</div>
+                        <div class="calendar-day other-month">31</div>
+                        <div class="calendar-day">1</div>
+                        <div class="calendar-day">2</div>
+                        <div class="calendar-day">3</div>
+                        <div class="calendar-day">4</div>
+                        <div class="calendar-day">5</div>
+                        
+                        <div class="calendar-day">6</div>
+                        <div class="calendar-day">7</div>
+                        <div class="calendar-day">8</div>
+                        <div class="calendar-day">9</div>
+                        <div class="calendar-day">10</div>
+                        <div class="calendar-day">11</div>
+                        <div class="calendar-day">12</div>
+                        
+                        <div class="calendar-day">13</div>
+                        <div class="calendar-day">14</div>
+                        <div class="calendar-day active has-appointment">15</div>
+                        <div class="calendar-day">16</div>
+                        <div class="calendar-day">17</div>
+                        <div class="calendar-day">18</div>
+                        <div class="calendar-day">19</div>
+                        
+                        <div class="calendar-day">20</div>
+                        <div class="calendar-day">21</div>
+                        <div class="calendar-day">22</div>
+                        <div class="calendar-day has-appointment">23</div>
+                        <div class="calendar-day">24</div>
+                        <div class="calendar-day">25</div>
+                        <div class="calendar-day">26</div>
+                        
+                        <div class="calendar-day">27</div>
+                        <div class="calendar-day">28</div>
+                        <div class="calendar-day">29</div>
+                        <div class="calendar-day">30</div>
+                        <div class="calendar-day">31</div>
+                        <div class="calendar-day other-month">1</div>
+                        <div class="calendar-day other-month">2</div>
+                    </div>
+                </div>
+                
+                <!-- Appointments List -->
+                <div class="appointments-list">
+                    <h3 style="margin-bottom: 20px;">Upcoming Appointments</h3>
+                    
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-title">Weekly Therapy Session</div>
+                                <div class="appointment-therapist">With Dr. Emily Rodriguez</div>
+                            </div>
+                            <div class="appointment-status status-upcoming">Upcoming</div>
+                        </div>
+                        
+                        <div class="appointment-time">
+                            <i class="fas fa-clock"></i> Today at 3:00 PM - 3:45 PM (45 minutes)
+                        </div>
+                        
+                        <div class="appointment-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-video"></i> Join Session
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-calendar-alt"></i> Reschedule
+                            </button>
+                            <button class="btn btn-danger">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-title">Group Therapy Session</div>
+                                <div class="appointment-therapist">With Dr. Emily Rodriguez & Group</div>
+                            </div>
+                            <div class="appointment-status status-upcoming">Upcoming</div>
+                        </div>
+                        
+                        <div class="appointment-time">
+                            <i class="fas fa-clock"></i> August 23, 2023 at 4:00 PM - 5:30 PM (90 minutes)
+                        </div>
+                        
+                        <div class="appointment-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-calendar-alt"></i> Reschedule
+                            </button>
+                            <button class="btn btn-danger">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 30px 0 20px;">Past Appointments</h3>
+                    
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-title">Weekly Therapy Session</div>
+                                <div class="appointment-therapist">With Dr. Emily Rodriguez</div>
+                            </div>
+                            <div class="appointment-status status-completed">Completed</div>
+                        </div>
+                        
+                        <div class="appointment-time">
+                            <i class="fas fa-clock"></i> August 8, 2023 at 3:00 PM - 3:45 PM
+                        </div>
+                        
+                        <div class="appointment-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-file-medical"></i> View Notes
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-redo"></i> Book Again
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-title">Initial Consultation</div>
+                                <div class="appointment-therapist">With Dr. Emily Rodriguez</div>
+                            </div>
+                            <div class="appointment-status status-completed">Completed</div>
+                        </div>
+                        
+                        <div class="appointment-time">
+                            <i class="fas fa-clock"></i> July 25, 2023 at 2:00 PM - 3:00 PM
+                        </div>
+                        
+                        <div class="appointment-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-file-medical"></i> View Notes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <div class="panel-card">
+                    <h3>Appointment Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Upcoming</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1</div>
+                            <div class="stat-label">Cancelled</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">92%</div>
+                            <div class="stat-label">Attendance</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-card">
+                    <h3>Quick Actions</h3>
+                    <div class="quick-action" onclick="openModal()">
+                        <div class="action-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Schedule New Appointment</h4>
+                            <p>Book a session with your therapist</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-action">
+                        <div class="action-icon" style="background-color: var(--secondary);">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Test Video</h4>
+                            <p>Check your camera and microphone</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-action">
+                        <div class="action-icon" style="background-color: var(--success);">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4>Session History</h4>
+                            <p>View past appointments and notes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Schedule Appointment Modal -->
+    <div class="modal" id="appointmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Schedule New Appointment</h2>
+                <div class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            
+            <form>
+                <div class="form-group">
+                    <label for="appointmentType">Appointment Type</label>
+                    <select id="appointmentType">
+                        <option value="">Select appointment type</option>
+                        <option value="individual">Individual Therapy Session</option>
+                        <option value="group">Group Therapy Session</option>
+                        <option value="consultation">Consultation</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="therapist">Therapist</label>
+                    <select id="therapist">
+                        <option value="">Select therapist</option>
+                        <option value="rodriguez" selected>Dr. Emily Rodriguez</option>
+                        <option value="chen">Dr. Michael Chen</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentDate">Date</label>
+                    <input type="date" id="appointmentDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentTime">Time</label>
+                    <input type="time" id="appointmentTime">
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentNotes">Notes (Optional)</label>
+                    <textarea id="appointmentNotes" rows="3" placeholder="Any specific concerns or topics you'd like to discuss?"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary">Schedule Appointment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function openModal() {
+            document.getElementById('appointmentModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('appointmentModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('appointmentModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+        
+        // Calendar day selection
+        const calendarDays = document.querySelectorAll('.calendar-day:not(.other-month)');
+        calendarDays.forEach(day => {
+            day.addEventListener('click', () => {
+                calendarDays.forEach(d => d.classList.remove('active'));
+                day.classList.add('active');
+            });
+        });
+        
+        // View option selection
+        const viewOptions = document.querySelectorAll('.view-option');
+        viewOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                viewOptions.forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

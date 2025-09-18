@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Therapist - Healthcare Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #ec4899;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 20px;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb i {
+            margin: 0 8px;
+            font-size: 12px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Therapist Profile Section */
+        .therapist-profile {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .therapist-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid var(--gray-light);
+        }
+        
+        .therapist-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .therapist-title {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .therapist-rating {
+            color: var(--warning);
+            margin-bottom: 15px;
+        }
+        
+        .profile-details {
+            margin: 20px 0;
+        }
+        
+        .detail-item {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-light);
+            color: var(--primary);
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .detail-content h4 {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .detail-content p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--gray-light);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f8fafc;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Specialties Section */
+        .specialties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .specialty-badge {
+            background-color: var(--gray-light);
+            color: var(--dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* Content Tabs */
+        .content-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Appointment History */
+        .appointment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .appointment-info h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .appointment-date {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .appointment-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-upcoming {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        
+        .status-cancelled {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        /* Documents Section */
+        .document-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .document-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .document-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-light);
+            color: var(--primary);
+            margin-right: 15px;
+        }
+        
+        .document-details h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .document-date {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .therapist-profile {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .nav-items {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .nav-item {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .nav-item:hover, .nav-item.active {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary);
+            }
+            
+            .appointment-item, .document-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .appointment-status {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-text">HealthCare+</div>
+        </div>
+        
+        <nav class="nav-items">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="mytherapist.html" class="nav-item">
+                <i class="fas fa-user-md"></i>
+                <span>My Therapist</span>
+            </a>
+            <a href="message.html" class="nav-item">
+                <i class="fas fa-comment-medical"></i>
+                <span>Messages</span>
+            </a>
+            <a href="appointment.html" class="nav-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>My Appointments</span>
+            </a>
+            <a href="resource.html" class="nav-item">
+                <i class="fas fa-file-medical"></i>
+                <span>Resources</span>
+            </a>
+            <a href="setting.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Profile & Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">
+                    <a href="#">Dashboard</a> <i class="fas fa-chevron-right"></i> <span>My Therapist</span>
+                </div>
+                <h1 class="page-title">My Therapist</h1>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar">JS</div>
+                <div class="user-info">
+                    <div class="user-name">John Smith</div>
+                    <div class="user-role">Patient</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Therapist Profile Section -->
+        <div class="therapist-profile">
+            <!-- Therapist Info Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Rodriguez" class="therapist-avatar">
+                    <h2 class="therapist-name">Dr. Emily Rodriguez</h2>
+                    <div class="therapist-title">PhD, Clinical Psychologist</div>
+                    <div class="therapist-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>4.7 (128 reviews)</span>
+                    </div>
+                </div>
+                
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Next Session</h4>
+                            <p>Today at 3:00 PM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Session Duration</h4>
+                            <p>45 minutes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Meeting Type</h4>
+                            <p>Video Conference</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-video"></i> Join Session
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-comment-medical"></i> Send Message
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-calendar-plus"></i> Schedule Appointment
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Therapist Details Card -->
+            <div class="profile-card">
+                <h3>About Dr. Rodriguez</h3>
+                <p class="about-text" style="margin: 15px 0; line-height: 1.6;">
+                    Dr. Emily Rodriguez is a licensed clinical psychologist with over 10 years of experience specializing 
+                    in cognitive behavioral therapy (CBT) and mindfulness-based stress reduction. She received her PhD 
+                    from Stanford University and has helped hundreds of patients manage anxiety, depression, and 
+                    relationship issues.
+                </p>
+                
+                <h4 style="margin: 20px 0 10px;">Specialties</h4>
+                <div class="specialties">
+                    <span class="specialty-badge">Anxiety</span>
+                    <span class="specialty-badge">Depression</span>
+                    <span class="specialty-badge">CBT</span>
+                    <span class="specialty-badge">Mindfulness</span>
+                    <span class="specialty-badge">Stress Management</span>
+                    <span class="specialty-badge">Relationship Issues</span>
+                </div>
+                
+                <div class="content-tabs">
+                    <div class="tab active" data-tab="appointments">Appointment History</div>
+                    <div class="tab" data-tab="documents">Shared Documents</div>
+                    <div class="tab" data-tab="notes">Session Notes</div>
+                </div>
+                
+                <div class="tab-content active" id="appointments">
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <h4>Weekly Therapy Session</h4>
+                            <div class="appointment-date">August 15, 2023 • 3:00 PM - 3:45 PM</div>
+                        </div>
+                        <div class="appointment-status status-completed">Completed</div>
+                    </div>
+                    
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <h4>Weekly Therapy Session</h4>
+                            <div class="appointment-date">August 8, 2023 • 3:00 PM - 3:45 PM</div>
+                        </div>
+                        <div class="appointment-status status-completed">Completed</div>
+                    </div>
+                    
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <h4>Weekly Therapy Session</h4>
+                            <div class="appointment-date">August 1, 2023 • 3:00 PM - 3:45 PM</div>
+                        </div>
+                        <div class="appointment-status status-completed">Completed</div>
+                    </div>
+                    
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <h4>Initial Consultation</h4>
+                            <div class="appointment-date">July 25, 2023 • 2:00 PM - 3:00 PM</div>
+                        </div>
+                        <div class="appointment-status status-completed">Completed</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="documents">
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="document-details">
+                                <h4>Mindfulness Exercises</h4>
+                                <div class="document-date">Shared on August 10, 2023</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline">Download</button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="document-details">
+                                <h4>CBT Worksheets</h4>
+                                <div class="document-date">Shared on August 3, 2023</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline">Download</button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="document-details">
+                                <h4>Treatment Plan</h4>
+                                <div class="document-date">Shared on July 25, 2023</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline">Download</button>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="notes">
+                    <p style="padding: 20px 0; text-align: center; color: var(--gray);">
+                        Session notes will be available here after your therapist reviews them.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

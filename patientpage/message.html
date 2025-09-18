@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Healthcare Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #ec4899;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 20px;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb i {
+            margin: 0 8px;
+            font-size: 12px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Messages Layout */
+        .messages-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 25px;
+            height: calc(100vh - 150px);
+        }
+        
+        /* Conversations Panel */
+        .conversations-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .new-message-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .new-message-btn i {
+            margin-right: 8px;
+        }
+        
+        .new-message-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 10px;
+        }
+        
+        .conversation-item {
+            display: flex;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 5px;
+        }
+        
+        .conversation-item:hover, .conversation-item.active {
+            background-color: #f8fafc;
+        }
+        
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .conversation-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .conversation-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .conversation-time {
+            color: var(--gray);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        
+        .conversation-preview {
+            color: var(--gray);
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .unread-badge {
+            background-color: var(--primary);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        /* Chat Panel */
+        .chat-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-left: 15px;
+        }
+        
+        .chat-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .chat-action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-light);
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chat-action-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .messages-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #f8fafc;
+        }
+        
+        .message {
+            display: flex;
+            max-width: 70%;
+        }
+        
+        .message.received {
+            align-self: flex-start;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+        }
+        
+        .message-content {
+            padding: 15px;
+            border-radius: 18px;
+            position: relative;
+        }
+        
+        .received .message-content {
+            background-color: white;
+            border-top-left-radius: 4px;
+            margin-left: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .sent .message-content {
+            background-color: var(--primary);
+            color: white;
+            border-top-right-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .sent .message-time {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .message-input {
+            padding: 20px;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .message-input textarea {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            resize: none;
+            height: 50px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+        
+        .message-input textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .attachment-btn, .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-light);
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .send-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .send-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .attachment-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--gray-light);
+        }
+        
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .messages-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .conversations-panel {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .nav-items {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .nav-item {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .nav-item:hover, .nav-item.active {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary);
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-text">HealthCare+</div>
+        </div>
+        
+        <nav class="nav-items">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="mytherapist.html" class="nav-item">
+                <i class="fas fa-user-md"></i>
+                <span>My Therapist</span>
+            </a>
+            <a href="message.html" class="nav-item">
+                <i class="fas fa-comment-medical"></i>
+                <span>Messages</span>
+            </a>
+            <a href="appointment.html" class="nav-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>My Appointments</span>
+            </a>
+            <a href="resource.html" class="nav-item">
+                <i class="fas fa-file-medical"></i>
+                <span>Resources</span>
+            </a>
+            <a href="setting.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Profile & Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">
+                    <a href="#">Dashboard</a> <i class="fas fa-chevron-right"></i> <span>Messages</span>
+                </div>
+                <h1 class="page-title">Messages</h1>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar">JS</div>
+                <div class="user-info">
+                    <div class="user-name">John Smith</div>
+                    <div class="user-role">Patient</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Layout -->
+        <div class="messages-container">
+            <!-- Conversations Panel -->
+            <div class="conversations-panel">
+                <div class="panel-header">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search conversations...">
+                    </div>
+                    <button class="new-message-btn">
+                        <i class="fas fa-plus"></i> New Message
+                    </button>
+                </div>
+                
+                <div class="conversations-list">
+                    <div class="conversation-item active">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Rodriguez" class="conversation-avatar">
+                        <div class="conversation-info">
+                            <div class="conversation-name">
+                                <span>Dr. Emily Rodriguez</span>
+                                <span class="conversation-time">10:42 AM</span>
+                            </div>
+                            <div class="conversation-preview">
+                                Hi John, I wanted to check in and see how you're doing with the techniques we discussed...
+                            </div>
+                        </div>
+                        <div class="unread-badge">3</div>
+                    </div>
+                    
+                    <div class="conversation-item">
+                        <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Michael Chen" class="conversation-avatar">
+                        <div class="conversation-info">
+                            <div class="conversation-name">
+                                <span>Dr. Michael Chen</span>
+                                <span class="conversation-time">Yesterday</span>
+                            </div>
+                            <div class="conversation-preview">
+                                Your test results have come back, let's discuss them in our next session.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conversation-item">
+                        <div class="conversation-avatar" style="background-color: #0ea5e9; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">SC</div>
+                        <div class="conversation-info">
+                            <div class="conversation-name">
+                                <span>Support Center</span>
+                                <span class="conversation-time">Aug 12</span>
+                            </div>
+                            <div class="conversation-preview">
+                                Your appointment confirmation for August 15 at 3:00 PM
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conversation-item">
+                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d15?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Lisa Johnson" class="conversation-avatar">
+                        <div class="conversation-info">
+                            <div class="conversation-name">
+                                <span>Lisa Johnson (Group Therapy)</span>
+                                <span class="conversation-time">Aug 10</span>
+                            </div>
+                            <div class="conversation-preview">
+                                Looking forward to our group session next week!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Rodriguez" class="conversation-avatar">
+                    <div class="chat-title">Dr. Emily Rodriguez</div>
+                    <div class="chat-actions">
+                        <div class="chat-action-btn">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="chat-action-btn">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="chat-action-btn">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="messages-area">
+                    <div class="message received">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Rodriguez" class="conversation-avatar">
+                        <div class="message-content">
+                            <p>Hi John, I hope you're having a good week. How are the mindfulness exercises we discussed working for you?</p>
+                            <div class="message-time">10:30 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="message sent">
+                        <div class="message-content">
+                            <p>Hi Dr. Rodriguez, thanks for checking in. The exercises have been helpful, especially when I feel anxious at work.</p>
+                            <div class="message-time">10:35 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="message received">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Rodriguez" class="conversation-avatar">
+                        <div class="message-content">
+                            <p>I'm glad to hear that! Consistency is key. Have you noticed any particular situations where they work best?</p>
+                            <div class="message-time">10:38 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="message sent">
+                        <div class="message-content">
+                            <p>They work really well when I feel overwhelmed with deadlines. I've been doing the breathing technique for 5 minutes when I start to feel stressed.</p>
+                            <div class="message-time">10:40 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="message received">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Rodriguez" class="conversation-avatar">
+                        <div class="message-content">
+                            <p>That's excellent progress, John. I'd like you to try journaling about these situations too. I'm sending you a worksheet that might help.</p>
+                            <div class="message-time">10:42 AM</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-input">
+                    <button class="attachment-btn">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <textarea placeholder="Type your message here..."></textarea>
+                    <button class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simple message sending functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.querySelector('.message-input textarea');
+            const sendButton = document.querySelector('.send-btn');
+            const messagesArea = document.querySelector('.messages-area');
+            
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            function sendMessage() {
+                const messageText = messageInput.value.trim();
+                if (messageText) {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'message sent';
+                    messageElement.innerHTML = `
+                        <div class="message-content">
+                            <p>${messageText}</p>
+                            <div class="message-time">${timeString}</div>
+                        </div>
+                    `;
+                    
+                    messagesArea.appendChild(messageElement);
+                    messageInput.value = '';
+                    
+                    // Auto scroll to bottom
+                    messagesArea.scrollTop = messagesArea.scrollHeight;
+                    
+                    // Simulate reply after a delay
+                    setTimeout(simulateReply, 2000);
+                }
+            }
+            
+            function simulateReply() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message received';
+                messageElement.innerHTML = `
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Rodriguez" class="conversation-avatar">
+                    <div class="message-content">
+                        <p>Thanks for sharing that, John. I appreciate your commitment to the process.</p>
+                        <div class="message-time">${timeString}</div>
+                    </div>
+                `;
+                
+                messagesArea.appendChild(messageElement);
+                
+                // Auto scroll to bottom
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>

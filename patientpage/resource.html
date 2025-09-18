@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - Healthcare Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #ec4899;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 20px;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb i {
+            margin: 0 8px;
+            font-size: 12px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Resources Layout */
+        .resources-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+        
+        /* Resources Content */
+        .resources-content {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #f8fafc;
+            border: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .resource-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border: 1px solid var(--gray-light);
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .resource-image {
+            height: 160px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .resource-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .resource-card:hover .resource-image img {
+            transform: scale(1.05);
+        }
+        
+        .resource-category {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: white;
+        }
+        
+        .resource-content {
+            padding: 20px;
+        }
+        
+        .resource-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .resource-description {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .panel-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-card h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .recommended-resources {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .recommended-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .recommended-item:hover {
+            background-color: #eef2f7;
+        }
+        
+        .recommended-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .recommended-content h4 {
+            font-weight: 600;
+            margin-bottom: 3px;
+            font-size: 15px;
+        }
+        
+        .recommended-content p {
+            color: var(--gray);
+            font-size: 13px;
+        }
+        
+        .progress-section {
+            margin-top: 20px;
+        }
+        
+        .progress-item {
+            margin-bottom: 15px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .progress-title {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .progress-percent {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+        
+        /* Resource Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .modal-resource-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .modal-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-description {
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .resources-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .resources-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .nav-items {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .nav-item {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .nav-item:hover, .nav-item.active {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary);
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .resource-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-text">HealthCare+</div>
+        </div>
+        
+        <nav class="nav-items">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="mytherapist.html" class="nav-item">
+                <i class="fas fa-user-md"></i>
+                <span>My Therapist</span>
+            </a>
+            <a href="message.html" class="nav-item">
+                <i class="fas fa-comment-medical"></i>
+                <span>Messages</span>
+            </a>
+            <a href="appointment.html" class="nav-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>My Appointments</span>
+            </a>
+            <a href="resource.html" class="nav-item">
+                <i class="fas fa-file-medical"></i>
+                <span>Resources</span>
+            </a>
+            <a href="setting.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Profile & Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">
+                    <a href="#">Dashboard</a> <i class="fas fa-chevron-right"></i> <span>Resources</span>
+                </div>
+                <h1 class="page-title">Resources</h1>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar">JS</div>
+                <div class="user-info">
+                    <div class="user-name">John Smith</div>
+                    <div class="user-role">Patient</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Layout -->
+        <div class="resources-container">
+            <!-- Main Content -->
+            <div class="resources-content">
+                <div class="content-header">
+                    <h2>Therapy Resources & Materials</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search resources...">
+                    </div>
+                </div>
+                
+                <div class="filter-options">
+                    <button class="filter-btn active">All Resources</button>
+                    <button class="filter-btn">Worksheets</button>
+                    <button class="filter-btn">Articles</button>
+                    <button class="filter-btn">Videos</button>
+                    <button class="filter-btn">Audio</button>
+                    <button class="filter-btn">Recommended</button>
+                </div>
+                
+                <div class="resources-grid">
+                    <!-- Resource Card 1 -->
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Mindfulness Exercises">
+                            <div class="resource-category">Worksheets</div>
+                        </div>
+                        <div class="resource-content">
+                            <h3 class="resource-title">Mindfulness Meditation Guide</h3>
+                            <p class="resource-description">A comprehensive guide to mindfulness meditation techniques with practical exercises.</p>
+                            <div class="resource-meta">
+                                <span><i class="fas fa-file-pdf"></i> PDF (12 pages)</span>
+                                <span>Shared: Aug 10, 2023</span>
+                            </div>
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" onclick="openResource(1)">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resource Card 2 -->
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <img src="https://images.unsplash.com/photo-1598940603846-a1edd0ef5274?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="CBT Techniques">
+                            <div class="resource-category">Article</div>
+                        </div>
+                        <div class="resource-content">
+                            <h3 class="resource-title">CBT Techniques for Anxiety</h3>
+                            <p class="resource-description">Learn how to apply Cognitive Behavioral Therapy techniques to manage anxiety symptoms.</p>
+                            <div class="resource-meta">
+                                <span><i class="fas fa-file-alt"></i> Article (8 min read)</span>
+                                <span>Shared: Aug 5, 2023</span>
+                            </div>
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" onclick="openResource(2)">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-bookmark"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resource Card 3 -->
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Breathing Exercises">
+                            <div class="resource-category">Audio</div>
+                        </div>
+                        <div class="resource-content">
+                            <h3 class="resource-title">Guided Breathing Exercises</h3>
+                            <p class="resource-description">Audio guide for deep breathing exercises to help reduce stress and anxiety.</p>
+                            <div class="resource-meta">
+                                <span><i class="fas fa-headphones"></i> Audio (15 min)</span>
+                                <span>Shared: Aug 2, 2023</span>
+                            </div>
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" onclick="openResource(3)">
+                                    <i class="fas fa-play-circle"></i> Listen
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resource Card 4 -->
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Journal Prompts">
+                            <div class="resource-category">Worksheets</div>
+                        </div>
+                        <div class="resource-content">
+                            <h3 class="resource-title">Therapeutic Journal Prompts</h3>
+                            <p class="resource-description">30 days of journaling prompts to support self-reflection and emotional processing.</p>
+                            <div class="resource-meta">
+                                <span><i class="fas fa-file-pdf"></i> PDF (10 pages)</span>
+                                <span>Shared: Jul 28, 2023</span>
+                            </div>
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" onclick="openResource(4)">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resource Card 5 -->
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Sleep Hygiene">
+                            <div class="resource-category">Article</div>
+                        </div>
+                        <div class="resource-content">
+                            <h3 class="resource-title">Sleep Hygiene Guide</h3>
+                            <p class="resource-description">Evidence-based strategies to improve sleep quality and overcome insomnia.</p>
+                            <div class="resource-meta">
+                                <span><i class="fas fa-file-alt"></i> Article (10 min read)</span>
+                                <span>Shared: Jul 25, 2023</span>
+                            </div>
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" onclick="openResource(5)">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-bookmark"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resource Card 6 -->
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Yoga for Stress">
+                            <div class="resource-category">Video</div>
+                        </div>
+                        <div class="resource-content">
+                            <h3 class="resource-title">Yoga for Stress Relief</h3>
+                            <p class="resource-description">A gentle yoga sequence designed to release tension and calm the nervous system.</p>
+                            <div class="resource-meta">
+                                <span><i class="fas fa-video"></i> Video (25 min)</span>
+                                <span>Shared: Jul 20, 2023</span>
+                            </div>
+                            <div class="resource-actions">
+                                <button class="btn btn-primary" onclick="openResource(6)">
+                                    <i class="fas fa-play"></i> Watch
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-bookmark"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <div class="panel-card">
+                    <h3>Recommended For You</h3>
+                    <div class="recommended-resources">
+                        <div class="recommended-item">
+                            <div class="recommended-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="recommended-content">
+                                <h4>Anxiety Management Techniques</h4>
+                                <p>Based on your recent sessions</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommended-item">
+                            <div class="recommended-icon" style="background-color: var(--secondary);">
+                                <i class="fas fa-headphones"></i>
+                            </div>
+                            <div class="recommended-content">
+                                <h4>Progressive Muscle Relaxation</h4>
+                                <p>Audio guide for tension release</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommended-item">
+                            <div class="recommended-icon" style="background-color: var(--success);">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="recommended-content">
+                                <h4>Building Emotional Resilience</h4>
+                                <p>Article with practical strategies</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-card">
+                    <h3>Your Progress</h3>
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-title">Resources Viewed</span>
+                                <span class="progress-percent">65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-title">Worksheets Completed</span>
+                                <span class="progress-percent">40%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-title">Recommended Content</span>
+                                <span class="progress-percent">25%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 25%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-card">
+                    <h3>Recent Activity</h3>
+                    <div class="recommended-resources">
+                        <div class="recommended-item">
+                            <div class="recommended-icon" style="background-color: var(--warning);">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="recommended-content">
+                                <h4>Downloaded Mindfulness Guide</h4>
+                                <p>Yesterday at 3:42 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommended-item">
+                            <div class="recommended-icon" style="background-color: var(--primary);">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="recommended-content">
+                                <h4>Viewed CBT Techniques Article</h4>
+                                <p>August 12, 2023</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommended-item">
+                            <div class="recommended-icon" style="background-color: var(--success);">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="recommended-content">
+                                <h4>Completed Journaling Worksheet</h4>
+                                <p>August 10, 2023</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Resource Modal -->
+    <div class="modal" id="resourceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Mindfulness Meditation Guide</h2>
+                <div class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            
+            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" alt="Mindfulness Exercises" class="modal-resource-image">
+            
+            <div class="modal-meta">
+                <span><i class="fas fa-file-pdf"></i> PDF Worksheet</span>
+                <span><i class="fas fa-clock"></i> 12 pages</span>
+                <span><i class="fas fa-calendar"></i> Shared: Aug 10, 2023</span>
+            </div>
+            
+            <h3 class="modal-title">About This Resource</h3>
+            <p class="modal-description">
+                This comprehensive guide introduces you to mindfulness meditation techniques that can help reduce stress, 
+                improve focus, and promote emotional well-being. The exercises are designed to be practical and easy to 
+                incorporate into your daily routine. Each technique includes step-by-step instructions and tips for 
+                overcoming common challenges.
+            </p>
+            
+            <h3 class="modal-title">How to Use This Resource</h3>
+            <p class="modal-description">
+                For best results, try one exercise per day for the next two weeks. Set aside 10-15 minutes in a quiet 
+                space where you won't be disturbed. Keep a journal to note your experiences and observations after 
+                each practice session.
+            </p>
+            
+            <div class="modal-actions">
+                <button class="btn btn-outline">
+                    <i class="fas fa-bookmark"></i> Save for Later
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function openResource(id) {
+            document.getElementById('resourceModal').style.display = 'flex';
+            
+            // In a real application, you would load resource data based on the ID
+            // For this demo, we're just showing the same modal for all resources
+        }
+        
+        function closeModal() {
+            document.getElementById('resourceModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('resourceModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+        
+        // Filter button functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // In a real application, you would filter resources here
+            });
+        });
+    </script>
+</body>
+</html>
